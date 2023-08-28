@@ -143,7 +143,7 @@ func handleRoutes() error {
 
 func OpenDB() *gorm.DB {
 
-	host := "localhost"
+	host := "db"
 	dbport := "5432"
 	user := "postgres"
 	dbName := "bg"
