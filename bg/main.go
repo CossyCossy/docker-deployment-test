@@ -55,8 +55,9 @@ func handleRoutes() error {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
 		"http://localhost:3000",
-		"http://192.168.0.106:6080",
-		"http://192.168.0.106:4000"}
+		"http://localhost:8080",
+		"http://localhost:80",
+	}
 	config.AllowMethods = []string{"PUT", "PATCH", "POST", "GET", "OPTIONS", "HEAD"}
 	config.AllowHeaders = []string{
 		"Authorization",
