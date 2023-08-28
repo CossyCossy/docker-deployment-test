@@ -37,8 +37,8 @@ services:
       - pika-network
 
 networks:
-  pika-network: 
-    driver: bridge
+  pika-network
+    # driver: bridge
 
 volumes:
   postgres_data:
