@@ -54,14 +54,14 @@ func handleRoutes() error {
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
-		"http://localhost:3000",
-		"http://localhost:8080",
+		// "http://localhost:3000",
+		// "http://localhost:8080",
 		"http://localhost:80",
-		"http://localhost",
-		"http://ui",
-		"http://ui:3000",
-		"http://front",
-		"http://front:3000",
+		// "http://localhost",
+		// "http://ui",
+		// "http://ui:3000",
+		// "http://front",
+		// "http://front:3000",
 	}
 
 	config.AllowMethods = []string{"PUT", "PATCH", "POST", "GET", "OPTIONS", "HEAD"}
