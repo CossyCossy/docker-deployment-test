@@ -60,6 +60,8 @@ func handleRoutes() error {
 		"http://localhost",
 		"http://ui",
 		"http://ui:3000",
+		"http://front",
+		"http://front:3000",
 	}
 
 	config.AllowMethods = []string{"PUT", "PATCH", "POST", "GET", "OPTIONS", "HEAD"}
