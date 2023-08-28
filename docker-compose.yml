@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    restart: always
     depends_on:
       - db
       - bg
@@ -18,10 +19,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    restart: on-failure
     depends_on:
       - db
     networks:
       - pika-network
+    
+
 
   db:
     image: postgres:14-alpine
