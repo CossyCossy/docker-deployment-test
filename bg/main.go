@@ -54,7 +54,7 @@ func handleRoutes() error {
 	router := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
-		"http://localhost:80",
+		"http://localhost",
 	}
 
 	config.AllowMethods = []string{"PUT", "PATCH", "POST", "GET", "OPTIONS", "HEAD"}
