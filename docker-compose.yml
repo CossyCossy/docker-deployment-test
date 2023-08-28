@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  ui:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - bg
+    networks:
+      - pika-network
+
+  bg:
+    build:
+      context: ./bg
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - pika-network
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: bg
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    networks:
+      - pika-network
+
+networks:
+  pika-network: 
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+
+
