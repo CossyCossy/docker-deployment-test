@@ -21,7 +21,7 @@ function App() {
 
     // Send the form data to the server using fetch
     try {
-      const response = await fetch('http://localhost:8080', {
+      const response = await fetch('http://localhost:8000', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

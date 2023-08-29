@@ -18,7 +18,7 @@ var err error
 var DB *gorm.DB
 
 var (
-	addressPort = flag.String("addr", ":"+"8080", "")
+	addressPort = flag.String("addr", ":"+"8000", "")
 	cert        = flag.String("cert", "", "")
 	key         = flag.String("key", "", "")
 )
@@ -48,7 +48,7 @@ func main() {
 func handleRoutes() error {
 
 	if *addressPort == ":" {
-		*addressPort = ":8080"
+		*addressPort = ":8000"
 	}
 
 	router := gin.Default()
