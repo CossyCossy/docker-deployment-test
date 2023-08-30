@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   front:
     build:
@@ -24,8 +24,6 @@ services:
       - db
     networks:
       - pika-network
-    
-
 
   db:
     image: postgres:14-alpine
@@ -33,19 +31,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      POSTGRES_DB: bg
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+    env_file:
+      - .env
     networks:
       - pika-network
 
 networks:
-  pika-network: 
+  pika-network:
     driver: bridge
 
 volumes:
   postgres_data:
-
-
-
