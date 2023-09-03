@@ -105,13 +105,13 @@ pipeline {
                     echo 'BG TO HUB'
                     script {
                         bat 'docker push cossycossy/bg:latest'
-                        bat "docker run --name bg --network --restart on-failure:5 ${DOCKER_NETWORK} -p 8000:8000 -d cossycossy/bg"
+                        bat "docker run --name bg --network ${DOCKER_NETWORK} --restart on-failure:5 -p 8000:8000 -d cossycossy/bg"
                     }
                    
                     echo 'UI TO HUB'
                     script {
                         bat 'docker push cossycossy/front:latest'
-                        bat "docker run --name front --network --restart always ${DOCKER_NETWORK} -p 80:80 -d cossycossy/front"
+                        bat "docker run --name front --network ${DOCKER_NETWORK} --restart always  -p 80:80 -d cossycossy/front" 
                     }
                    
             }
