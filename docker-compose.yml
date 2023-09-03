@@ -4,6 +4,10 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+      args:
+        - IMAGE_TAG=front:latest
+    image: front:latest
+    container_name: front
     ports:
       - "80:80"
     restart: always
@@ -17,6 +21,10 @@ services:
     build:
       context: ./bg
       dockerfile: Dockerfile
+      args:
+        - IMAGE_TAG=bg:latest
+    image: bg:latest
+    container_name: bg
     ports:
       - "8000:8000"
     restart: on-failure
@@ -27,6 +35,7 @@ services:
 
   db:
     image: postgres:14-alpine
+    container_name: db
     ports:
       - "5432:5432"
     volumes:

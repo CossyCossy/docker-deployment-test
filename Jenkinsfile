@@ -10,7 +10,7 @@ pipeline {
         CGO_ENABLED = 0
         GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
         POSTGRES_VOLUME = "postgres_data"
-        DOCKER_NETWORK = "pika-network"
+        DOCKER_NETWORK = "docker-deployment-test_pika-network"
     }
    
     options {
@@ -29,34 +29,23 @@ pipeline {
             steps {
                 echo 'LOGIN TO DOCKER'
                 script {
+                    echo "${env.BUILD_ID} ${BUILD_ID}"
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerhubPassword', usernameVariable: 'dockerhubUser')]) {
                     bat "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
                 }
               }
             }
         }
-        stage("create-volumes") {
+        stage("check volumes") {
             agent any
             steps {
-                echo 'CREATE POSTGRESS VOLUME'
+                echo 'CHECK POSGRESS VOLUME'
                 script {
-                    bat "docker volume create ${POSTGRES_VOLUME}"
+                  //  bat "docker volume create ${POSTGRES_VOLUME}"
                     bat 'docker volume ls'
               }
             }
         }
-        // stage("build-db-image") {
-        //     agent any
-        //     steps {
-        //         echo 'PULL AND PUSH POSGRESS IMAGE'
-        //         script {
-        //             bat 'docker pull postgres:15.2-alpine'
-        //             bat 'docker tag postgres:15.2-alpine cossycossy/db:latest'
-        //             bat 'docker image list'
-
-        //       }
-        //     }
-        // }
         stage("build-bg-image") {
             steps {
                 dir('bg') {
@@ -65,11 +54,11 @@ pipeline {
                         bat 'go version'
                         bat 'docker version'
                         bat 'go get ./...'
-                        bat 'docker build . -t bg:latest'
-                        bat 'docker tag bg:latest cossycossy/bg:latest'
+                        // bat 'docker build . -t bg:latest'
+                        bat "docker build . -t bg:${BUILD_ID}"
+                        bat "docker tag bg:${BUILD_ID} bg:latest"
                         bat 'docker image list'
                     }
-                   
                 }
             }
         }
@@ -78,8 +67,8 @@ pipeline {
                 dir('front') {
                     echo 'STARTED BACKEND BUILD'
                     script {
-                        bat 'docker build . -t front'
-                        bat 'docker tag front:latest cossycossy/front:latest'
+                        bat "docker build . -t front:${BUILD_ID}"
+                        bat "docker tag front:${BUILD_ID} front:latest"
                         bat 'docker image list'
                     }
                 }
@@ -96,25 +85,59 @@ pipeline {
         }
         stage("move-images-hub and start containers") {
             steps {
-                    echo 'PUSHING DB TO DOCKERHUB AND RUN CONTAINER'
-                    // script {
-                    //     bat 'docker push cossycossy/db:latest'
-                    //     bat "docker run -d --name db --network ${DOCKER_NETWORK} -e POSTGRES_DB=bg -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -p 5432:5432 -v /${POSTGRES_VOLUME}:/var/lib/postgresql/data cossycossy/db"                   
-                    //      }
-                   
-                    echo 'BG TO HUB'
+                
+                    echo 'PUSHING BG TO DOCKERHUB AND RUN CONTAINER'
                     script {
+
+                        //stop the container
+                        bat 'docker stop bg'
+
+                        //remove the container
+                        bat 'docker rm bg'
+
+                        bat "docker run --name bg --network ${DOCKER_NETWORK} --restart on-failure:5 -p 8000:8000 -d bg:latest"
+
+                        // create image for docker hub
+                        bat 'docker tag bg:latest cossycossy/bg:latest'
+                        
+                        //push image to docker hub
                         bat 'docker push cossycossy/bg:latest'
-                        bat "docker run --name bg --network ${DOCKER_NETWORK} --restart on-failure:5 -p 8000:8000 -d cossycossy/bg"
                     }
-                   
-                    echo 'UI TO HUB'
+            
+                    echo 'PUSHING FRONT TO DOCKERHUB AND RUN CONTAINER'
                     script {
+                          //stop the container
+                        bat 'docker stop front'
+
+                        //remove the container
+                        bat 'docker rm front'
+
+                        bat "docker run --name front --network ${DOCKER_NETWORK} --restart always -p 80:80 -d front:latest"
+
+                        // create image for docker hub
+                        bat 'docker tag front:latest cossycossy/front:latest'
+                        
+                        //push image to docker hub
                         bat 'docker push cossycossy/front:latest'
-                        bat "docker run --name front --network ${DOCKER_NETWORK} --restart always  -p 80:80 -d cossycossy/front" 
                     }
                    
             }
         }
+         stage("remover local image") {
+             steps {
+                echo 'REMOVING LOCAL IMAGES'
+                script {
+                    echo 'REMOVING BG IMAGES'
+                    bat "docker rmi bg:${BUILD_ID}"
+                    bat 'docker rmi cossycossy/bg:latest'
+
+                    echo 'REMOVING FRONT IMAGES'
+                    bat "docker rmi front:${BUILD_ID}"
+                    bat 'docker rmi cossycossy/front:latest'
+
+                    bat 'docker image list'
+                }
+             }
+         }
      }
 }
