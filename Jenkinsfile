@@ -45,18 +45,18 @@ pipeline {
               }
             }
         }
-        // stage("build-db-image") {
-        //     agent any
-        //     steps {
-        //         echo 'PULL AND PUSH POSGRESS IMAGE'
-        //         script {
-        //             bat 'docker pull postgres:15.2-alpine'
-        //             bat 'docker tag postgres:15.2-alpine cossycossy/db:latest'
-        //             bat 'docker image list'
+        stage("build-db-image") {
+            agent any
+            steps {
+                echo 'PULL AND PUSH POSGRESS IMAGE'
+                script {
+                    bat 'docker pull postgres:15.2-alpine'
+                    bat 'docker tag postgres:15.2-alpine cossycossy/db:latest'
+                    bat 'docker image list'
 
-        //       }
-        //     }
-        // }
+              }
+            }
+        }
         stage("build-bg-image") {
             steps {
                 dir('bg') {
