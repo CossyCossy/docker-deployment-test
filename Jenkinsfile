@@ -45,18 +45,18 @@ pipeline {
               }
             }
         }
-        stage("build-db-image") {
-            agent any
-            steps {
-                echo 'PULL AND PUSH POSGRESS IMAGE'
-                script {
-                    bat 'docker pull postgres:15.2-alpine'
-                    bat 'docker tag postgres:15.2-alpine cossycossy/db:latest'
-                    bat 'docker image list'
+        // stage("build-db-image") {
+        //     agent any
+        //     steps {
+        //         echo 'PULL AND PUSH POSGRESS IMAGE'
+        //         script {
+        //             bat 'docker pull postgres:15.2-alpine'
+        //             bat 'docker tag postgres:15.2-alpine cossycossy/db:latest'
+        //             bat 'docker image list'
 
-              }
-            }
-        }
+        //       }
+        //     }
+        // }
         stage("build-bg-image") {
             steps {
                 dir('bg') {
@@ -97,9 +97,10 @@ pipeline {
         stage("move-images-hub and start containers") {
             steps {
                     echo 'PUSHING DB TO DOCKERHUB AND RUN CONTAINER'
-                    script {
-                        bat 'docker push cossycossy/db:latest'
-                        bat "docker run -d --name db --network ${DOCKER_NETWORK} -e POSTGRES_DB=bg -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -p 5432:5432 -v /${POSTGRES_VOLUME}:/var/lib/postgresql/data cossycossy/db"                    }
+                    // script {
+                    //     bat 'docker push cossycossy/db:latest'
+                    //     bat "docker run -d --name db --network ${DOCKER_NETWORK} -e POSTGRES_DB=bg -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -p 5432:5432 -v /${POSTGRES_VOLUME}:/var/lib/postgresql/data cossycossy/db"                   
+                    //      }
                    
                     echo 'BG TO HUB'
                     script {
