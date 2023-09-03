@@ -29,7 +29,7 @@ pipeline {
             steps {
                 echo 'LOGIN TO DOCKER'
                 script {
-                    echo "${env.BUILD_ID} ${BUILD_ID}"
+                    echo "${BUILD_ID}"
                     withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerhubPassword', usernameVariable: 'dockerhubUser')]) {
                     bat "docker login -u ${env.dockerhubUser} -p ${env.dockerhubPassword}"
                 }
