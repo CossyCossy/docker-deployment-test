@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   front:
     build:
@@ -24,8 +24,6 @@ services:
       - db
     networks:
       - pika-network
-    
-
 
   db:
     image: postgres:14-alpine
@@ -39,11 +37,8 @@ services:
       - pika-network
 
 networks:
-  pika-network: 
+  pika-network:
     driver: bridge
 
 volumes:
   postgres_data:
-
-
-
